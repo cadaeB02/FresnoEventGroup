@@ -4,15 +4,14 @@ import { useState } from 'react';
 import styles from './gallery.module.css';
 
 const galleryImages = [
-  { src: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a93782bec212d9451f7633c/1519613999539/289.jpg', alt: 'Elegant wedding portrait in stone archway', category: 'weddings' },
-  { src: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a272c50e2c483cf8718269a/1512516699910/Nicki++Matt_283_w_full.jpg', alt: 'Beautiful bride and groom outdoor ceremony', category: 'weddings' },
-  { src: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5c3ba8244fa51afb62d1561b/1547413553563/Sneak+Peeks-0006+resize.jpg', alt: 'Wedding party celebration outdoors', category: 'weddings' },
-  { src: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a77790671c10bcbfb8dfc27/1611958639863/16265207_10155870498657818_9198860857523937196_n.jpg', alt: 'Event celebration at venue', category: 'events' },
-  { src: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a399b62085229908fb9ffd6/1513724774311/18765867_10209361185002628_4222052745932842814_n.jpg', alt: 'Wedding ceremony setup', category: 'weddings' },
-  { src: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a39ac4a71c10b1cd4ccf4a2/1513729103519/11026199_1074314492594830_2426318677805836382_n.jpg', alt: 'Corporate event setup', category: 'events' },
-  { src: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5c3bb19b1ae6cfa74d6882e0/1547415968424/dc+photography+studios.jpg', alt: 'Wedding reception decor', category: 'weddings' },
-  { src: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a272a71e2c483cf87182279/1512516219627/Charlotte+and+Clark_389_w_full.jpg', alt: 'Beautiful wedding ceremony outdoors', category: 'weddings' },
-  { src: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a399165419202af3257a637/1513722233523/Nicki++Matt_284_w_full.jpg', alt: 'Wedding couple portrait', category: 'weddings' },
+  { src: '/images/event_stone_archway.jpg', alt: 'Elegant wedding portrait in stone archway', category: 'weddings' },
+  { src: '/images/event_wedding_table.jpg', alt: 'Beautiful bride and groom outdoor ceremony', category: 'weddings' },
+  { src: '/images/event_wedding_party.jpg', alt: 'Wedding party celebration outdoors', category: 'weddings' },
+  { src: '/images/event_rainy_wedding.jpg', alt: 'Event celebration at venue', category: 'events' },
+  { src: '/images/event_ceremony_setup.jpg', alt: 'Wedding ceremony setup', category: 'weddings' },
+  { src: '/images/event_paris_gala.jpg', alt: 'Corporate event setup', category: 'events' },
+  { src: '/images/event_farm_table.jpg', alt: 'Wedding reception decor', category: 'weddings' },
+  { src: '/images/event_petal_toss.jpg', alt: 'Wedding couple portrait', category: 'weddings' },
 ];
 
 const categories = [

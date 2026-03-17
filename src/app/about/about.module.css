@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url('https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/601b44330daff80acf815953/1612399672155/130904214_10221601446139825_8287488702611818428_o.jpg');
+  background-image: url('/images/event_barb_arch.jpg');
   background-size: cover;
   background-position: center;
 }

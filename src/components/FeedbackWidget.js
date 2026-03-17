@@ -9,16 +9,27 @@ export default function FeedbackWidget() {
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState('');
   const [category, setCategory] = useState('general');
+  const [reviewer, setReviewer] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const pathname = usePathname();
   const textareaRef = useRef(null);
+
+  const reviewers = [
+    { key: 'cindy', name: 'Cindy', initials: 'CB' },
+    { key: 'barb', name: 'Barb', initials: 'BT' },
+    { key: 'nicole', name: 'Nicole', initials: 'NT' },
+  ];
+
+  const currentReviewer = reviewers.find(r => r.key === reviewer);
 
   // Load notes from localStorage on mount
   const loadNotes = useCallback(() => {
     try {
       const saved = localStorage.getItem('feg-feedback-notes');
       if (saved) setNotes(JSON.parse(saved));
+      const savedReviewer = localStorage.getItem('feg-reviewer');
+      if (savedReviewer) setReviewer(savedReviewer);
     } catch (e) {
       console.error('Error loading notes:', e);
     }
@@ -34,13 +45,19 @@ export default function FeedbackWidget() {
     setIsOpen(!isOpen);
   };
 
+  const selectReviewer = (key) => {
+    setReviewer(key);
+    localStorage.setItem('feg-reviewer', key);
+  };
+
   const addNote = () => {
-    if (!currentNote.trim()) return;
+    if (!currentNote.trim() || !reviewer) return;
     const newNote = {
       id: Date.now(),
       text: currentNote.trim(),
       page: pathname,
       category,
+      reviewer: currentReviewer?.name || reviewer,
       timestamp: new Date().toLocaleString(),
     };
     const updated = [...notes, newNote];
@@ -69,12 +86,12 @@ export default function FeedbackWidget() {
       grouped[note.page].push(note);
     });
 
-    let message = 'FEG Site Review Notes\n\n';
+    let message = `FEG Site Review Notes (from ${currentReviewer?.name || 'Reviewer'})\n\n`;
     Object.entries(grouped).forEach(([page, pageNotes]) => {
       message += `Page: ${page}\n`;
       pageNotes.forEach(note => {
         const icon = note.category === 'love' ? '[love]' : note.category === 'change' ? '[change]' : note.category === 'remove' ? '[remove]' : '[note]';
-        message += `  ${icon} ${note.text}\n`;
+        message += `  ${icon} (${note.reviewer}) ${note.text}\n`;
       });
       message += '\n';
     });
@@ -146,7 +163,9 @@ export default function FeedbackWidget() {
         <div className={styles.panelHeader}>
           <div>
             <h3 className={styles.panelTitle}>Review Notes</h3>
-            <p className={styles.panelSubtitle}>Hi Cindy! Leave your feedback here.</p>
+            <p className={styles.panelSubtitle}>
+              {reviewer ? `Hi ${currentReviewer?.name}! Leave your feedback here.` : 'Select who is reviewing below.'}
+            </p>
           </div>
           {notes.length > 0 && (
             <button onClick={clearAllNotes} className={styles.clearBtn} title="Clear all notes">
@@ -155,43 +174,73 @@ export default function FeedbackWidget() {
           )}
         </div>
 
+        {/* Reviewer Picker */}
+        {!reviewer && (
+          <div className={styles.reviewerPicker}>
+            <p className={styles.reviewerLabel}>Who is reviewing today?</p>
+            <div className={styles.reviewerButtons}>
+              {reviewers.map(r => (
+                <button
+                  key={r.key}
+                  className={styles.reviewerBtn}
+                  onClick={() => selectReviewer(r.key)}
+                >
+                  <span className={styles.reviewerInitials}>{r.initials}</span>
+                  <span>{r.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Add Note Form */}
-        <div className={styles.addForm}>
-          <div className={styles.categoryPicker}>
-            {Object.entries(categoryIcons).map(([key, icon]) => (
+        {reviewer && (
+          <div className={styles.addForm}>
+            <div className={styles.addFormTop}>
+              <div className={styles.categoryPicker}>
+                {Object.entries(categoryIcons).map(([key, icon]) => (
+                  <button
+                    key={key}
+                    className={`${styles.categoryBtn} ${category === key ? styles.categoryActive : ''}`}
+                    onClick={() => setCategory(key)}
+                    title={key}
+                  >
+                    {icon}
+                  </button>
+                ))}
+              </div>
               <button
-                key={key}
-                className={`${styles.categoryBtn} ${category === key ? styles.categoryActive : ''}`}
-                onClick={() => setCategory(key)}
-                title={key}
+                className={styles.switchReviewer}
+                onClick={() => { setReviewer(''); localStorage.removeItem('feg-reviewer'); }}
+                title="Switch reviewer"
               >
-                {icon}
+                {currentReviewer?.initials}
               </button>
-            ))}
+            </div>
+            <div className={styles.inputRow}>
+              <textarea
+                ref={textareaRef}
+                value={currentNote}
+                onChange={(e) => setCurrentNote(e.target.value)}
+                placeholder="Type your note about this page..."
+                className={styles.textarea}
+                rows={2}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    addNote();
+                  }
+                }}
+              />
+              <button onClick={addNote} className={styles.addBtn} disabled={!currentNote.trim()}>
+                Add
+              </button>
+            </div>
+            <p className={styles.pageLabel}>
+              Noting on: <strong>{pathname}</strong>
+            </p>
           </div>
-          <div className={styles.inputRow}>
-            <textarea
-              ref={textareaRef}
-              value={currentNote}
-              onChange={(e) => setCurrentNote(e.target.value)}
-              placeholder="Type your note about this page..."
-              className={styles.textarea}
-              rows={2}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  addNote();
-                }
-              }}
-            />
-            <button onClick={addNote} className={styles.addBtn} disabled={!currentNote.trim()}>
-              Add
-            </button>
-          </div>
-          <p className={styles.pageLabel}>
-            Noting on: <strong>{pathname}</strong>
-          </p>
-        </div>
+        )}
 
         {/* Notes List */}
         <div className={styles.notesList}>

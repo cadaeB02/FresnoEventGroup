@@ -1,7 +1,7 @@
 .hero {
   position: relative; height: 50vh; min-height: 400px;
   display: flex; align-items: center; justify-content: center;
-  background-image: url('https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5c3ba8244fa51afb62d1561b/1547413553563/Sneak+Peeks-0006+resize.jpg');
+  background-image: url('/images/event_wedding_party.jpg');
   background-size: cover; background-position: center;
 }
 .heroOverlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.65)); }

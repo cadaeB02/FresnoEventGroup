@@ -11,7 +11,7 @@ const services = [
     title: 'Full Service Planning and Design',
     slug: 'full-service-planning',
     description: 'This is the ultimate service. If you have a busy schedule and are feeling overwhelmed or frustrated with your event planning details, let us assist you so your dream wedding can become your reality. We will be there each step of the way to guide you so you can relax on the big day and be stress free.',
-    image: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5c3bb19b1ae6cfa74d6882e0/1547415968424/dc+photography+studios.jpg',
+    image: '/images/event_farm_table.jpg',
     features: [
       'Unlimited personal face-to-face, phone and email consultations',
       'Assistance with locating and contracting ceremony and reception venues',
@@ -29,7 +29,7 @@ const services = [
     title: 'Wedding Day Management',
     slug: 'wedding-day-management',
     description: 'The day of your wedding needs to be a fun and joyous time. You can be at ease with your significant other and loved ones and have us manage all the nitty gritty details.',
-    image: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a399b62085229908fb9ffd6/1513724774311/18765867_10209361185002628_4222052745932842814_n.jpg',
+    image: '/images/event_ceremony_setup.jpg',
     features: [
       'Professionally dressed Senior Event Consultant(s) and up to 3 assistants on site',
       'Oversee the set-up of the Ceremony and Reception venue',
@@ -46,7 +46,7 @@ const services = [
     title: 'Social and Corporate Event Planning',
     slug: 'corporate-events',
     description: 'Your social soirees and corporate events are unique fun celebrations that we love to be a part of. Whether it be an intimate dinner party or a lavish corporate gala we will guide you with consultations to create the most memorable event ever.',
-    image: 'https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a39ac4a71c10b1cd4ccf4a2/1513729103519/11026199_1074314492594830_2426318677805836382_n.jpg',
+    image: '/images/event_paris_gala.jpg',
     features: [
       'Custom event design and theming',
       'Venue selection and coordination',

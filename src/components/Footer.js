@@ -128,6 +128,15 @@ export default function Footer() {
               Serving Fresno and the Central Valley since 2009
             </p>
           </div>
+          <p className={styles.photoCredits}>
+            Photography credits: DC Photography, Mason and Megan Photography, Russ Levi Photography,
+            Chris Geiger Photography, Jonathan Leggett Photography, Stephanie Ryan Photography,
+            Lomeli Images, Mark Tabay Photography, A Fierce Love Photography, Brian Bishop Photography,
+            Emily and Steven Photography, Isaac&apos;s Eye Photography, Misty Dameron Photography,
+            Photography by Andrew, Kaylee Chelsea Photography, Lathan J Lifestyle Photography,
+            Megan Helm Photography, Johnny Stafford Photography, Aleson and Devin Turner Photography,
+            Peter Amend Photography, Billy Camacho Photography and Yang Lu Photography
+          </p>
         </div>
       </div>
     </footer>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import styles from './page.module.css';
+import Testimonials from '../components/Testimonials';
 
 export default function Home() {
   return (
@@ -129,7 +130,7 @@ export default function Home() {
           <div className={styles.galleryGrid}>
             <div className={`${styles.galleryItem} ${styles.galleryLarge}`}>
               <img
-                src="https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a93782bec212d9451f7633c/1519613999539/289.jpg"
+                src="/images/event_stone_archway.jpg"
                 alt="Elegant wedding reception with beautiful table settings"
                 loading="lazy"
               />
@@ -139,7 +140,7 @@ export default function Home() {
             </div>
             <div className={styles.galleryItem}>
               <img
-                src="https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a272c50e2c483cf8718269a/1512516699910/Nicki++Matt_283_w_full.jpg"
+                src="/images/event_wedding_table.jpg"
                 alt="Beautiful couple at their wedding ceremony"
                 loading="lazy"
               />
@@ -149,7 +150,7 @@ export default function Home() {
             </div>
             <div className={styles.galleryItem}>
               <img
-                src="https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5c3ba8244fa51afb62d1561b/1547413553563/Sneak+Peeks-0006+resize.jpg"
+                src="/images/event_wedding_party.jpg"
                 alt="Event decor and design details"
                 loading="lazy"
               />
@@ -159,7 +160,7 @@ export default function Home() {
             </div>
             <div className={styles.galleryItem}>
               <img
-                src="https://static1.squarespace.com/static/5a2705c049fc2b02ff813561/t/5a77790671c10bcbfb8dfc27/1611958639863/16265207_10155870498657818_9198860857523937196_n.jpg"
+                src="/images/event_rainy_wedding.jpg"
                 alt="Festive event celebration"
                 loading="lazy"
               />
@@ -229,6 +230,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials */}
+      <Testimonials />
 
       {/* Team Preview */}
       <section className={`section ${styles.team}`}>

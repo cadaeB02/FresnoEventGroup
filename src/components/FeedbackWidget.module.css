@@ -113,6 +113,66 @@
   background: #FED7D7;
 }
 
+/* Reviewer Picker */
+.reviewerPicker {
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+  border-bottom: 1px solid var(--color-border-light);
+  background: var(--color-bg-alt);
+}
+
+.reviewerLabel {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.reviewerButtons {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.reviewerBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--color-border);
+  background: white;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  min-width: 90px;
+}
+
+.reviewerBtn:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-glow);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.reviewerInitials {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--text-sm);
+}
+
 /* Add Form */
 .addForm {
   padding: var(--space-4) var(--space-5);
@@ -120,10 +180,37 @@
   background: var(--color-bg-alt);
 }
 
+.addFormTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.switchReviewer {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.switchReviewer:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-sm);
+}
+
 .categoryPicker {
   display: flex;
   gap: var(--space-2);
-  margin-bottom: var(--space-3);
 }
 
 .categoryBtn {

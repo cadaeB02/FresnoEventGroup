@@ -1,0 +1,100 @@
+/* ============================================
+   Rental Category Sub-Page Styles
+   ============================================ */
+
+.header {
+  padding: var(--space-16) 0 var(--space-8);
+  background: var(--color-bg);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-6);
+  transition: all var(--transition-fast);
+}
+
+.backLink:hover {
+  color: var(--color-accent-hover);
+  transform: translateX(-4px);
+}
+
+.title {
+  font-size: var(--text-5xl);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.description {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  max-width: 640px;
+  line-height: 1.7;
+}
+
+/* Catalog Grid */
+.catalog {
+  padding-top: var(--space-8);
+}
+
+.catalogGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.catalogItem {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition-base);
+  background: white;
+}
+
+.catalogItem:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.catalogItem img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* CTA */
+.ctaHeading {
+  font-size: var(--text-4xl);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.ctaText {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-8);
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    padding: var(--space-12) 0 var(--space-6);
+  }
+
+  .title {
+    font-size: var(--text-4xl);
+  }
+
+  .catalogGrid {
+    gap: var(--space-6);
+  }
+}

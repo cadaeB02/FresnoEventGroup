@@ -1,0 +1,209 @@
+/* ============================================
+   Testimonials Component Styles
+   ============================================ */
+
+.testimonials {
+  text-align: center;
+}
+
+.header {
+  margin-bottom: var(--space-12);
+}
+
+.heading {
+  font-size: var(--text-4xl);
+  margin: var(--space-3) 0 var(--space-6);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-accent-glow);
+  border-radius: var(--radius-full);
+}
+
+.badgeText {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.badgeCount {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--color-border-light);
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+/* Carousel */
+.carousel {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-10) var(--space-8);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.quoteIcon {
+  position: absolute;
+  top: var(--space-6);
+  left: var(--space-6);
+}
+
+.quote {
+  font-size: var(--text-lg);
+  line-height: 1.8;
+  color: var(--color-text);
+  font-style: italic;
+  margin-bottom: var(--space-8);
+  position: relative;
+  z-index: 1;
+}
+
+.reviewer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.reviewerInitial {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.reviewerName {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-align: left;
+}
+
+.reviewerDate {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-align: left;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.navBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-light);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: all var(--transition-fast);
+}
+
+.navBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.dots {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-border-light);
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-fast);
+}
+
+.dotActive {
+  background: var(--color-accent);
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* WeddingWire Link */
+.weddingWireLink {
+  margin-top: var(--space-8);
+}
+
+.weddingWireLink a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-accent);
+  letter-spacing: 0.03em;
+  transition: color var(--transition-fast);
+}
+
+.weddingWireLink a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    padding: var(--space-8) var(--space-6);
+    min-height: 220px;
+  }
+
+  .quote {
+    font-size: var(--text-base);
+  }
+
+  .heading {
+    font-size: var(--text-3xl);
+  }
+
+  .badge {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
