@@ -1,0 +1,249 @@
+/* ============================================
+   Header Component Styles
+   ============================================ */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-sticky);
+  background: white;
+  border-bottom: 1px solid var(--color-border-light);
+  transition: all var(--transition-base);
+}
+
+.header.transparent {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+
+.header.scrolled {
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom-color: var(--color-border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.header.transparent .navLink,
+.header.transparent .logoText {
+  color: white;
+}
+
+.header.transparent .navCta {
+  border-color: white;
+  color: white;
+  background: transparent;
+}
+
+.header.transparent .navCta:hover {
+  background: white;
+  color: var(--color-text);
+}
+
+.header.transparent .menuToggle span {
+  background: white;
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--max-width-wide);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-8);
+  height: 72px;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  z-index: var(--z-modal);
+}
+
+.logoText {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  transition: color var(--transition-base);
+}
+
+/* Desktop Navigation */
+.desktopNav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.navLink {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.navLink:hover {
+  color: var(--color-text);
+}
+
+.navLink.active {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.navLink.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: var(--space-4);
+  right: var(--space-4);
+  height: 2px;
+  background: var(--color-accent);
+  border-radius: 1px;
+}
+
+.navCta {
+  margin-left: var(--space-4);
+  padding: var(--space-2) var(--space-6) !important;
+  font-size: var(--text-xs) !important;
+}
+
+/* Mobile Menu Toggle */
+.menuToggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  width: 28px;
+  padding: 4px 0;
+  z-index: var(--z-modal);
+}
+
+.menuToggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--color-text);
+  border-radius: 1px;
+  transition: all var(--transition-base);
+  transform-origin: center;
+}
+
+.menuToggle.menuOpen span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menuToggle.menuOpen span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.menuToggle.menuOpen span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile Overlay */
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay-heavy);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: var(--z-overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-slow);
+}
+
+.mobileOverlay.overlayVisible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--space-2);
+}
+
+.mobileNavLink {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 400;
+  color: var(--color-text-light);
+  padding: var(--space-3) var(--space-6);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all var(--transition-fast);
+}
+
+.overlayVisible .mobileNavLink {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+.mobileNavLink:hover {
+  color: var(--color-accent-light);
+}
+
+.mobileNavLink.active {
+  color: var(--color-accent);
+}
+
+.mobileCta {
+  margin-top: var(--space-6);
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.overlayVisible .mobileCta {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .desktopNav {
+    display: none;
+  }
+
+  .menuToggle {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerInner {
+    padding: var(--space-3) var(--space-4);
+    height: 60px;
+  }
+
+  .logoText {
+    font-size: var(--text-lg);
+  }
+
+  .mobileNavLink {
+    font-size: var(--text-2xl);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

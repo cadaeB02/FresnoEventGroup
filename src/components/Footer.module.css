@@ -1,0 +1,234 @@
+/* ============================================
+   Footer Component Styles
+   ============================================ */
+
+/* CTA Banner */
+.ctaBanner {
+  background: var(--color-bg-dark);
+  padding: var(--space-20) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaBanner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--color-accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.ctaInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+.ctaContent {
+  max-width: 560px;
+}
+
+.ctaHeading {
+  font-size: var(--text-4xl);
+  color: var(--color-text-light);
+  margin: var(--space-3) 0 var(--space-4);
+}
+
+.ctaText {
+  color: var(--color-text-light-muted);
+  font-size: var(--text-lg);
+  line-height: 1.6;
+}
+
+.ctaActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ctaActions .btn--outline {
+  border-color: var(--color-text-light-muted);
+  color: var(--color-text-light-muted);
+}
+
+.ctaActions .btn--outline:hover {
+  border-color: white;
+  background: white;
+  color: var(--color-text);
+}
+
+/* Footer Main */
+.footerMain {
+  background: var(--color-bg-dark-alt);
+  padding: var(--space-16) 0;
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+  gap: var(--space-12);
+}
+
+/* Brand Column */
+.footerLogo {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  color: var(--color-text-light);
+  margin-bottom: var(--space-2);
+}
+
+.footerTagline {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-accent);
+  font-style: italic;
+  margin-bottom: var(--space-6);
+}
+
+.socialLinks {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--color-text-light-muted);
+  transition: all var(--transition-base);
+}
+
+.socialLink:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+/* Footer Columns */
+.footerColumnTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+  margin-bottom: var(--space-5);
+}
+
+.footerNav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footerNav a {
+  font-size: var(--text-sm);
+  color: var(--color-text-light-muted);
+  transition: all var(--transition-fast);
+}
+
+.footerNav a:hover {
+  color: var(--color-accent-light);
+  transform: translateX(4px);
+}
+
+/* Contact Info */
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.contactItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-light-muted);
+  transition: color var(--transition-fast);
+  line-height: 1.5;
+}
+
+.contactItem svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+a.contactItem:hover {
+  color: var(--color-accent-light);
+}
+
+/* Bottom Bar */
+.footerBottom {
+  background: var(--color-bg-dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: var(--space-5) 0;
+}
+
+.bottomInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--color-text-light-muted);
+}
+
+.credits {
+  opacity: 0.6;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .ctaInner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .ctaActions {
+    flex-direction: row;
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-10);
+  }
+}
+
+@media (max-width: 600px) {
+  .ctaBanner {
+    padding: var(--space-12) 0;
+  }
+
+  .ctaHeading {
+    font-size: var(--text-3xl);
+  }
+
+  .ctaActions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .ctaActions .btn {
+    width: 100%;
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .bottomInner {
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: center;
+  }
+}
