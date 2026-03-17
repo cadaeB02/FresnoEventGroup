@@ -26,26 +26,66 @@ export default function TestLog() {
   const [notes, setNotes] = useState([]);
   const [filter, setFilter] = useState('all');
   const [expandedImage, setExpandedImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState(null);
 
+  // Fetch from API on mount
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('feg-feedback-notes');
-      if (saved) setNotes(JSON.parse(saved));
-    } catch (e) {
-      console.error('Error loading notes:', e);
+    async function fetchNotes() {
+      try {
+        const res = await fetch('/api/feedback');
+        const data = await res.json();
+        if (data.notes) {
+          setNotes(data.notes);
+        } else if (data.fallback) {
+          const saved = localStorage.getItem('feg-feedback-notes');
+          if (saved) setNotes(JSON.parse(saved));
+        }
+      } catch (e) {
+        console.error('API error, using localStorage:', e);
+        const saved = localStorage.getItem('feg-feedback-notes');
+        if (saved) setNotes(JSON.parse(saved));
+      } finally {
+        setIsLoading(false);
+      }
     }
+    fetchNotes();
   }, []);
 
-  const deleteNote = (id) => {
-    const updated = notes.filter(n => n.id !== id);
-    localStorage.setItem('feg-feedback-notes', JSON.stringify(updated));
-    setNotes(updated);
+  const deleteNote = async (id) => {
+    try {
+      await fetch(`/api/feedback?id=${id}`, { method: 'DELETE' });
+    } catch (e) {
+      console.error('Delete error:', e);
+    }
+    setNotes(prev => prev.filter(n => n.id !== id));
   };
 
-  const clearAll = () => {
+  const clearAll = async () => {
     if (confirm('Clear all reports? This cannot be undone.')) {
-      localStorage.setItem('feg-feedback-notes', JSON.stringify([]));
+      try {
+        await fetch('/api/feedback?id=all', { method: 'DELETE' });
+      } catch (e) {
+        console.error('Clear error:', e);
+      }
       setNotes([]);
+    }
+  };
+
+  // Copy a single report to clipboard
+  const copyReport = async (note) => {
+    const tag = (categoryLabels[note.category] || 'Note').toUpperCase();
+    let text = `[${tag}] Page: ${note.page}\n`;
+    text += `${note.text}\n`;
+    if (note.image) text += `[Screenshot attached - see test log]\n`;
+    text += `Reporter: ${note.reviewer} - ${note.timestamp}`;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(note.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (e) {
+      console.error('Copy failed:', e);
     }
   };
 
@@ -65,11 +105,13 @@ export default function TestLog() {
   const loveCount = notes.filter(n => n.category === 'love').length;
   const noteCount = notes.filter(n => ['note', 'general'].includes(n.category)).length;
 
-  const exportAsText = () => {
+  const exportAll = async () => {
     let text = `FEG Test Log - ${new Date().toLocaleDateString()}\n`;
-    text += `Total: ${notes.length} reports (${bugCount} bugs, ${changeCount} changes)\n\n`;
+    text += `Total: ${notes.length} reports (${bugCount} bugs, ${changeCount} changes)\n`;
+    text += `${'='.repeat(50)}\n\n`;
     Object.entries(grouped).forEach(([page, pageNotes]) => {
-      text += `--- Page: ${page} ---\n`;
+      text += `Page: ${page}\n`;
+      text += `${'-'.repeat(30)}\n`;
       pageNotes.forEach(note => {
         const tag = (categoryLabels[note.category] || 'Note').toUpperCase();
         text += `  [${tag}] ${note.text}`;
@@ -77,10 +119,11 @@ export default function TestLog() {
         text += `\n  By ${note.reviewer} on ${note.timestamp}\n\n`;
       });
     });
-    navigator.clipboard.writeText(text).then(() => {
-      alert('Test log copied to clipboard!');
-    }).catch(() => {
-      // Fallback
+
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('Full test log copied to clipboard!');
+    } catch (e) {
       const blob = new Blob([text], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -88,7 +131,15 @@ export default function TestLog() {
       a.download = `feg-test-log-${Date.now()}.txt`;
       a.click();
       URL.revokeObjectURL(url);
-    });
+    }
+  };
+
+  // Download a screenshot image
+  const downloadImage = (imageData, noteId) => {
+    const a = document.createElement('a');
+    a.href = imageData;
+    a.download = `feg-screenshot-${noteId}.jpg`;
+    a.click();
   };
 
   return (
@@ -130,12 +181,12 @@ export default function TestLog() {
               </div>
             </div>
             <div className={styles.actions}>
-              <button onClick={exportAsText} className={styles.exportBtn} disabled={notes.length === 0}>
+              <button onClick={exportAll} className={styles.exportBtn} disabled={notes.length === 0}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>
                   <rect x="8" y="2" width="8" height="4" rx="1"/>
                 </svg>
-                Copy to Clipboard
+                Export All to Clipboard
               </button>
               {notes.length > 0 && (
                 <button onClick={clearAll} className={styles.clearAllBtn}>
@@ -185,7 +236,11 @@ export default function TestLog() {
       {/* Reports */}
       <section className={`section ${styles.reports}`}>
         <div className="container">
-          {Object.keys(grouped).length === 0 ? (
+          {isLoading ? (
+            <div className={styles.emptyState}>
+              <p>Loading reports...</p>
+            </div>
+          ) : Object.keys(grouped).length === 0 ? (
             <div className={styles.emptyState}>
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5" style={{ opacity: 0.4 }}>
                 <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
@@ -213,11 +268,29 @@ export default function TestLog() {
                           {categoryLabels[note.category] || 'Note'}
                         </span>
                         <span className={styles.reportMeta}>{note.reviewer} - {note.timestamp}</span>
-                        <button onClick={() => deleteNote(note.id)} className={styles.reportDelete} title="Delete report">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                          </svg>
-                        </button>
+                        <div className={styles.reportActions}>
+                          <button
+                            onClick={() => copyReport(note)}
+                            className={styles.reportCopy}
+                            title="Copy to clipboard"
+                          >
+                            {copiedId === note.id ? (
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38A169" strokeWidth="2.5">
+                                <polyline points="20 6 9 17 4 12"/>
+                              </svg>
+                            ) : (
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                              </svg>
+                            )}
+                          </button>
+                          <button onClick={() => deleteNote(note.id)} className={styles.reportDelete} title="Delete report">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                       <p className={styles.reportText}>{note.text}</p>
                       {note.image && (
@@ -228,6 +301,17 @@ export default function TestLog() {
                             className={styles.reportImage}
                             onClick={() => setExpandedImage(note.image)}
                           />
+                          <button
+                            className={styles.downloadImageBtn}
+                            onClick={() => downloadImage(note.image, note.id)}
+                            title="Download screenshot"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                              <polyline points="7 10 12 15 17 10"/>
+                              <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                          </button>
                         </div>
                       )}
                     </div>

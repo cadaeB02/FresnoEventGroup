@@ -192,12 +192,12 @@ export default function Home() {
                 or create it.
               </p>
               <div className={styles.rentalsTags}>
-                <span className={styles.rentalTag}>Candelabras</span>
-                <span className={styles.rentalTag}>Vases</span>
-                <span className={styles.rentalTag}>Lanterns & Chandeliers</span>
-                <span className={styles.rentalTag}>Cake Stands</span>
-                <span className={styles.rentalTag}>Custom Props</span>
-                <span className={styles.rentalTag}>Accessories</span>
+                <Link href="/rentals/candelabras" className={styles.rentalTag}>Candelabras</Link>
+                <Link href="/rentals/vases" className={styles.rentalTag}>Vases</Link>
+                <Link href="/rentals/lanterns-lamps-and-chandeliers" className={styles.rentalTag}>Lanterns & Chandeliers</Link>
+                <Link href="/rentals/cake-stands-and-service-ware" className={styles.rentalTag}>Cake Stands</Link>
+                <Link href="/rentals/custom-props" className={styles.rentalTag}>Custom Props</Link>
+                <Link href="/rentals/accessories-and-props" className={styles.rentalTag}>Accessories</Link>
               </div>
               <Link href="/rentals" className="btn btn--primary btn--large">
                 Browse Rentals

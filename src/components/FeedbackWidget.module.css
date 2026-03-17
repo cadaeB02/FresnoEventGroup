@@ -123,7 +123,40 @@
 }
 .clearBtn:hover { background: #FED7D7; }
 
-/* Reviewer Picker */
+/* View Test Log Banner */
+.viewLogBanner {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
+  background: var(--color-bg-alt);
+}
+.viewLogBannerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: var(--color-accent);
+  color: white;
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+.viewLogBannerBtn:hover {
+  background: var(--color-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.viewLogCount {
+  background: rgba(255,255,255,0.25);
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+}
+
 .reviewerPicker {
   padding: var(--space-5) var(--space-5);
   text-align: center;

@@ -13,6 +13,7 @@ export default function FeedbackWidget() {
   const [imagePreview, setImagePreview] = useState(null);
   const [imageData, setImageData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -25,20 +26,30 @@ export default function FeedbackWidget() {
 
   const currentReviewer = reviewers.find(r => r.key === reviewer);
 
-  const loadNotes = useCallback(() => {
+  // Fetch notes from API (shared across all users)
+  const loadNotes = useCallback(async () => {
     try {
+      setIsLoading(true);
+      const res = await fetch('/api/feedback');
+      const data = await res.json();
+      if (data.notes) {
+        setNotes(data.notes);
+      }
+      // If API returns fallback flag, load from localStorage as backup
+      if (data.fallback) {
+        const saved = localStorage.getItem('feg-feedback-notes');
+        if (saved) setNotes(JSON.parse(saved));
+      }
+    } catch (e) {
+      // Fallback to localStorage if API is down
+      console.error('API error, using localStorage:', e);
       const saved = localStorage.getItem('feg-feedback-notes');
       if (saved) setNotes(JSON.parse(saved));
-      const savedReviewer = localStorage.getItem('feg-reviewer');
-      if (savedReviewer) setReviewer(savedReviewer);
-    } catch (e) {
-      console.error('Error loading notes:', e);
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
-
-  const saveNotes = useCallback((updatedNotes) => {
-    localStorage.setItem('feg-feedback-notes', JSON.stringify(updatedNotes));
-    setNotes(updatedNotes);
+    const savedReviewer = localStorage.getItem('feg-reviewer');
+    if (savedReviewer) setReviewer(savedReviewer);
   }, []);
 
   const handleOpen = () => {
@@ -54,8 +65,6 @@ export default function FeedbackWidget() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // Compress and convert to base64
     const reader = new FileReader();
     reader.onload = (event) => {
       const img = new Image();
@@ -86,19 +95,34 @@ export default function FeedbackWidget() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const addNote = () => {
+  const addNote = async () => {
     if (!currentNote.trim() || !reviewer) return;
-    const newNote = {
-      id: Date.now(),
+    const noteData = {
       text: currentNote.trim(),
       page: pathname,
       category,
       reviewer: currentReviewer?.name || reviewer,
-      timestamp: new Date().toLocaleString(),
       image: imageData || null,
     };
-    const updated = [...notes, newNote];
-    saveNotes(updated);
+
+    try {
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(noteData),
+      });
+      const data = await res.json();
+      if (data.note) {
+        setNotes(prev => [...prev, data.note]);
+      }
+    } catch (e) {
+      // Fallback: save to localStorage
+      const newNote = { ...noteData, id: Date.now(), timestamp: new Date().toLocaleString() };
+      const existing = JSON.parse(localStorage.getItem('feg-feedback-notes') || '[]');
+      localStorage.setItem('feg-feedback-notes', JSON.stringify([...existing, newNote]));
+      setNotes(prev => [...prev, newNote]);
+    }
+
     setCurrentNote('');
     setCategory('bug');
     removeImage();
@@ -107,14 +131,23 @@ export default function FeedbackWidget() {
     if (textareaRef.current) textareaRef.current.focus();
   };
 
-  const deleteNote = (id) => {
-    const updated = notes.filter(n => n.id !== id);
-    saveNotes(updated);
+  const deleteNote = async (id) => {
+    try {
+      await fetch(`/api/feedback?id=${id}`, { method: 'DELETE' });
+    } catch (e) {
+      console.error('Delete error:', e);
+    }
+    setNotes(prev => prev.filter(n => n.id !== id));
   };
 
-  const clearAllNotes = () => {
+  const clearAllNotes = async () => {
     if (confirm('Clear all reports? This cannot be undone.')) {
-      saveNotes([]);
+      try {
+        await fetch('/api/feedback?id=all', { method: 'DELETE' });
+      } catch (e) {
+        console.error('Clear error:', e);
+      }
+      setNotes([]);
     }
   };
 
@@ -169,7 +202,7 @@ export default function FeedbackWidget() {
             <p className={styles.panelSubtitle}>
               {reviewer
                 ? `Hi ${currentReviewer?.name}! Report bugs or leave feedback.`
-                : 'Select who is reviewing below.'}
+                : 'Select who is reviewing, or view the test log.'}
             </p>
           </div>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -184,6 +217,19 @@ export default function FeedbackWidget() {
               </button>
             )}
           </div>
+        </div>
+
+        {/* View Test Log Button (always visible) */}
+        <div className={styles.viewLogBanner}>
+          <a href="/test-log" className={styles.viewLogBannerBtn}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+              <rect x="9" y="3" width="6" height="4" rx="1"/>
+              <path d="M9 14l2 2 4-4"/>
+            </svg>
+            View Full Test Log
+            {notes.length > 0 && <span className={styles.viewLogCount}>{notes.length}</span>}
+          </a>
         </div>
 
         {/* Reviewer Picker */}
@@ -292,75 +338,74 @@ export default function FeedbackWidget() {
           </div>
         )}
 
+        {/* Loading State */}
+        {isLoading && (
+          <div className={styles.emptyState}>
+            <p>Loading reports...</p>
+          </div>
+        )}
+
         {/* Notes List */}
-        <div className={styles.notesList}>
-          {currentPageNotes.length > 0 && (
-            <div className={styles.notesSection}>
-              <h4 className={styles.notesSectionTitle}>This Page ({currentPageNotes.length})</h4>
-              {currentPageNotes.map(note => (
-                <div key={note.id} className={styles.noteItem}>
-                  <span
-                    className={styles.noteTag}
-                    style={{ background: categoryColors[note.category] || '#718096' }}
-                  >
-                    {categoryLabels[note.category] || note.category}
-                  </span>
-                  <div className={styles.noteContent}>
-                    <p className={styles.noteText}>{note.text}</p>
-                    {note.image && (
-                      <img src={note.image} alt="Bug screenshot" className={styles.noteImage} />
-                    )}
-                    <span className={styles.noteTime}>{note.reviewer} - {note.timestamp}</span>
+        {!isLoading && (
+          <div className={styles.notesList}>
+            {currentPageNotes.length > 0 && (
+              <div className={styles.notesSection}>
+                <h4 className={styles.notesSectionTitle}>This Page ({currentPageNotes.length})</h4>
+                {currentPageNotes.map(note => (
+                  <div key={note.id} className={styles.noteItem}>
+                    <span className={styles.noteTag} style={{ background: categoryColors[note.category] || '#718096' }}>
+                      {categoryLabels[note.category] || note.category}
+                    </span>
+                    <div className={styles.noteContent}>
+                      <p className={styles.noteText}>{note.text}</p>
+                      {note.image && <img src={note.image} alt="Screenshot" className={styles.noteImage} />}
+                      <span className={styles.noteTime}>{note.reviewer} - {note.timestamp}</span>
+                    </div>
+                    <button onClick={() => deleteNote(note.id)} className={styles.deleteBtn}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                      </svg>
+                    </button>
                   </div>
-                  <button onClick={() => deleteNote(note.id)} className={styles.deleteBtn}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
 
-          {otherNotes.length > 0 && (
-            <div className={styles.notesSection}>
-              <h4 className={styles.notesSectionTitle}>Other Pages ({otherNotes.length})</h4>
-              {otherNotes.map(note => (
-                <div key={note.id} className={styles.noteItem}>
-                  <span
-                    className={styles.noteTag}
-                    style={{ background: categoryColors[note.category] || '#718096' }}
-                  >
-                    {categoryLabels[note.category] || note.category}
-                  </span>
-                  <div className={styles.noteContent}>
-                    <p className={styles.noteText}>{note.text}</p>
-                    {note.image && (
-                      <img src={note.image} alt="Bug screenshot" className={styles.noteImage} />
-                    )}
-                    <span className={styles.noteMeta}>{note.page} - {note.reviewer} - {note.timestamp}</span>
+            {otherNotes.length > 0 && (
+              <div className={styles.notesSection}>
+                <h4 className={styles.notesSectionTitle}>Other Pages ({otherNotes.length})</h4>
+                {otherNotes.map(note => (
+                  <div key={note.id} className={styles.noteItem}>
+                    <span className={styles.noteTag} style={{ background: categoryColors[note.category] || '#718096' }}>
+                      {categoryLabels[note.category] || note.category}
+                    </span>
+                    <div className={styles.noteContent}>
+                      <p className={styles.noteText}>{note.text}</p>
+                      {note.image && <img src={note.image} alt="Screenshot" className={styles.noteImage} />}
+                      <span className={styles.noteMeta}>{note.page} - {note.reviewer} - {note.timestamp}</span>
+                    </div>
+                    <button onClick={() => deleteNote(note.id)} className={styles.deleteBtn}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                      </svg>
+                    </button>
                   </div>
-                  <button onClick={() => deleteNote(note.id)} className={styles.deleteBtn}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
 
-          {notes.length === 0 && (
-            <div className={styles.emptyState}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5" style={{ marginBottom: '8px', opacity: 0.5 }}>
-                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
-                <rect x="9" y="3" width="6" height="4" rx="1"/>
-                <path d="M9 14l2 2 4-4"/>
-              </svg>
-              <p>No reports yet. Browse the site and log any issues you find.</p>
-            </div>
-          )}
-        </div>
+            {notes.length === 0 && (
+              <div className={styles.emptyState}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5" style={{ marginBottom: '8px', opacity: 0.5 }}>
+                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                  <rect x="9" y="3" width="6" height="4" rx="1"/>
+                  <path d="M9 14l2 2 4-4"/>
+                </svg>
+                <p>No reports yet. Browse the site and log any issues you find.</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Summary Bar */}
         {notes.length > 0 && (
