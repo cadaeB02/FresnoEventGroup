@@ -15,7 +15,12 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // For now, show success and log. In production, connect to a form service.
+    // TODO: Contact form is not connected to a backend yet.
+    // Before wiring this up, we need to find out what API or plugin
+    // the previous fresnoeventgroup.com site was using to handle
+    // contact form submissions, so we can use the same service
+    // (or migrate to a new one that works with this Next.js setup).
+    // Options include: Formspree, EmailJS, SendGrid, or a custom API route.
     console.log('Form submitted:', formData);
     setIsSubmitted(true);
   };
